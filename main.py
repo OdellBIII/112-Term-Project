@@ -4,6 +4,7 @@ from pygame.locals import *
 from objects.Piece import Piece
 from objects.Player import Player
 from objects.GamePiece import GamePiece
+from modes.Screen import Screen
 
 
 
@@ -20,20 +21,40 @@ class App:
     def on_init(self):
         pygame.init()
         self._display_surf = pygame.display.set_mode(self.size, pygame.HWSURFACE | pygame.DOUBLEBUF)
-        self._display_surf.fill((0, 255, 255))
+        self._display_surf.fill((255, 255, 255))
         self._running = True
         self.background = pygame.Surface((self.width, self.height))
         self.background.fill((0, 255, 255))
+        self.screens = ["Start", "Play", "ScoreBoard", "Credits", "Instructions"]
+        self.currentScreen = 0
 
-        # Falling piece initialization methods
-        self.groupOfPieces = pygame.sprite.Group()
+        # Game Screen initialization
+        self.gameScreen = Screen(self.width, self.height, (0, 255, 255))
         self.newPieceGenerationEvent = pygame.USEREVENT + 1
         pygame.time.set_timer(self.newPieceGenerationEvent, 1000)
 
         # Player initialization methods
-        self.player = Player(self.width // 2, 0, 50, 50, (255, 255, 255))
+        self.gameScreen.add(Player(self.width // 2, 0, 20, 50, (255, 255, 255)))
 
     def on_event(self, event):
+
+
+        if self.currentScreen == 0:
+
+            pass
+        elif self.currentScreen == 1:
+
+            self.gameScreen.on_event(event)
+
+        elif self.currentScreen == 2:
+
+            pass
+        elif self.currentScreen == 3:
+
+            pass
+        elif self.currentScreen == 4:
+
+            pass
 
         if event.type == pygame.QUIT:
             self._running = False
@@ -42,35 +63,55 @@ class App:
         elif event.type == self.newPieceGenerationEvent:
 
             color = random.choice([(255, 255, 255), (0, 0, 255)])
-            self.groupOfPieces.add(Piece(random.randint(0, self.width - 50), \
-                                         -100 - self.scrollY, 50, 50, color))
-            pass
-        self.player.onKeyPressed(event)
-        pass
+            self.gameScreen.add(Piece(random.choice(list(range(0, 80*8, 80))), \
+                                         -100 - self.scrollY, 80, 80, color))
+
+        if event.type == KEYDOWN and event.key == K_p:
+
+            self.currentScreen = 1
 
     def on_loop(self):
 
         self.clock.tick(60)
 
-        Piece.registryOfGamePieces.update(self)
+        if self.currentScreen == 0:
 
-        self.player.update(self)
-        #self.highestPoint = min([piece.rect.y if piece.isTouched else self.height for piece in self.groupOfPieces.sprites()])
+            pass
+        elif self.currentScreen == 1:
 
-        if self.highestPoint <= self.height // 2:
+            self.gameScreen.update(self)
 
-            self.scrollDy = 3
+        elif self.currentScreen == 2:
 
-        self.scrollY += self.scrollDy
+            pass
+        elif self.currentScreen == 3:
+
+            pass
+        elif self.currentScreen == 4:
+
+            pass
+
 
     def on_render(self):
 
-        self._display_surf.blit(self.background, self.background.get_rect())
+        if self.currentScreen == 0:
 
-        self.groupOfPieces.draw(self._display_surf)
-        self._display_surf.blit(self.player.surface, self.player.rect)
-        # pygame.draw.line(self._display_surf, (255, 0, 0), (0, self.height // 2), \
-        #                  (self.width, self.height // 2), 2)
+            pass
+        elif self.currentScreen == 1:
+
+            self._display_surf.blit(self.background, self.background.get_rect())
+            self.gameScreen.render(self._display_surf)
+
+        elif self.currentScreen == 2:
+
+            pass
+        elif self.currentScreen == 3:
+
+            pass
+        elif self.currentScreen == 4:
+
+            pass
+
         pygame.display.flip()
 
     def on_cleanup(self):

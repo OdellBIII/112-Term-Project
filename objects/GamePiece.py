@@ -44,3 +44,7 @@ class GamePiece(pygame.sprite.Sprite):
 
         pass
 
+    def onKeyPressed(self, event):
+
+        pass
+
