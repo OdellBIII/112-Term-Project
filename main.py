@@ -5,8 +5,7 @@ from objects.Piece import Piece
 from objects.Player import Player
 from objects.GamePiece import GamePiece
 from modes.Screen import Screen
-
-
+from widgets.Button import *
 
 class App:
     def __init__(self, newWidth, newHeight):
@@ -21,27 +20,35 @@ class App:
     def on_init(self):
         pygame.init()
         self._display_surf = pygame.display.set_mode(self.size, pygame.HWSURFACE | pygame.DOUBLEBUF)
-        self._display_surf.fill((255, 255, 255))
+        self._display_surf.fill((255, 0, 0))
         self._running = True
         self.background = pygame.Surface((self.width, self.height))
-        self.background.fill((0, 255, 255))
+        self.background.fill((0, 0, 0))
         self.screens = ["Start", "Play", "ScoreBoard", "Credits", "Instructions"]
         self.currentScreen = 0
+
+        # Start Screen initialization
+        self.startScreen = Screen(self.width, self.height, (255, 255, 255))
+        self.startScreen.add(TextDisplay(self.width // 2, self.height // 4, 100, 50, "Jerry's Great Climb", 40))
+        button = Button(self.width // 2, self.height // 2, 100, 50, "Play!", 40)
+        button.setCallBack(self.setPlayScreen)
+        self.startScreen.add(button)
 
         # Game Screen initialization
         self.gameScreen = Screen(self.width, self.height, (0, 255, 255))
         self.newPieceGenerationEvent = pygame.USEREVENT + 1
-        pygame.time.set_timer(self.newPieceGenerationEvent, 1000)
 
         # Player initialization methods
         self.gameScreen.add(Player(self.width // 2, 0, 20, 50, (255, 255, 255)))
+
 
     def on_event(self, event):
 
 
         if self.currentScreen == 0:
 
-            pass
+            self.startScreen.on_event(event)
+
         elif self.currentScreen == 1:
 
             self.gameScreen.on_event(event)
@@ -96,12 +103,13 @@ class App:
 
         if self.currentScreen == 0:
 
-            pass
+            self.startScreen.render(self._display_surf)
+            pygame.display.flip()
+
         elif self.currentScreen == 1:
 
-            self._display_surf.blit(self.background, self.background.get_rect())
             self.gameScreen.render(self._display_surf)
-
+            pygame.display.flip()
         elif self.currentScreen == 2:
 
             pass
@@ -112,7 +120,16 @@ class App:
 
             pass
 
-        pygame.display.flip()
+    def changeScreen(self, newScreen):
+
+        if 0 <= newScreen < len(self.screens):
+
+            self.currentScreen = newScreen
+
+    def setPlayScreen(self):
+
+        self.changeScreen(1)
+        pygame.time.set_timer(self.newPieceGenerationEvent, 1000)
 
     def on_cleanup(self):
         pygame.quit()

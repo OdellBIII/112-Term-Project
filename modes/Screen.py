@@ -29,5 +29,5 @@ class Screen(object):
 
         for gamePiece in self.gamePieceGroup:
 
-            gamePiece.onKeyPressed(event)
+            gamePiece.onUserInput(event)
 

@@ -18,6 +18,7 @@ class Player(GamePiece):
         self.isInAir = True
         self.jumpVelocity = -600
         self.horizontalSpeed = 0
+        self.bottomPiece = None
 
     def move(self, deltaTime, horizontalBound, verticalBound):
 
@@ -35,12 +36,12 @@ class Player(GamePiece):
 
         self.velocityX += self.horizontalSpeed
 
+
+        self.checkBounds(application.width, application.height)
+        self.collidedWithPieces(application.width, application.height)
         self.move(application.clock.get_time(), application.width, application.height)
 
-        self.collidedWithPieces()
-        self.checkBounds(application.width, application.height)
-
-    def onKeyPressed(self, event):
+    def onUserInput(self, event):
 
         if event.type == KEYDOWN:
 
@@ -75,6 +76,7 @@ class Player(GamePiece):
 
             if self.isInAir:
                self.velocityX = 0
+
             self.isInAir = False
             self.rect.y = height - self.rect.height
             self.velocityY = 0
@@ -88,35 +90,45 @@ class Player(GamePiece):
             self.rect.x = width - self.rect.width
 
 
-    def collidedWithPieces(self):
+    def collidedWithPieces(self, width, height):
 
         listOfRects = [piece.rect for piece in Piece.registryOfGamePieces.sprites()]
 
         index = self.rect.collidelist(listOfRects)
 
-        if index != -1 and listOfRects[index] != self.rect and \
-                listOfRects[index].y + listOfRects[index].height * 0.2 < self.rect.y + self.rect.height:
+        if index != -1:
 
-            if self.rect.x > listOfRects[index].x + listOfRects[index].width * 0.8 and \
-                    self.rect.x < listOfRects[index].x + listOfRects[index].width:
+            if listOfRects[index].y + listOfRects[index].height * 0.2 < self.rect.y + self.rect.height:
 
-                self.rect.x = Piece.registryOfGamePieces.sprites()[index].x + Piece.registryOfGamePieces.sprites()[index].width
+                if self.rect.x > listOfRects[index].x + listOfRects[index].width * 0.8 and \
+                        self.rect.x < listOfRects[index].x + listOfRects[index].width:
+
+                    self.rect.x = listOfRects[index].x + listOfRects[index].width
+                    self.velocityX = 0
+                    self.horizontalSpeed = 0
+                    #self.isInAir = False
+
+                elif self.rect.x + self.rect.width > listOfRects[index].x:
+
+                    self.rect.x = listOfRects[index].x - self.rect.width
+                    self.velocityX = 0
+                    self.horizontalSpeed = 0
+                    #self.isInAir = False
+
+            if self.rect.y + self.rect.height < listOfRects[index].y + listOfRects[index].height * 0.3 and \
+                self.isInAir:
+
+                self.isInAir = False
+                self.rect.y = listOfRects[index].y - self.rect.height
+                self.bottomPiece = listOfRects[index]
+                self.velocityY = 0
                 self.velocityX = 0
                 self.horizontalSpeed = 0
 
-            elif self.rect.x + self.rect.width > Piece.registryOfGamePieces.sprites()[index].x:
 
-                self.rect.x = Piece.registryOfGamePieces.sprites()[index].x - self.rect.width
-                self.velocityX = 0
-                self.horizontalSpeed = 0
+        elif self.rect.y < height - self.rect.height and not self.isInAir and not self.bottomPiece.collidepoint(self.rect.x // 2, self.rect.y + self.rect.height + 5):
 
-        if index != -1 and self.rect.y + self.rect.height < listOfRects[index].y + listOfRects[index].height * 0.3 and \
-            self.isInAir:
+            self.isInAir = True
 
-            print("Boop it Happened!")
-            self.isInAir = False
-            self.rect.y = listOfRects[index].y - self.rect.height
-            self.velocityY = 0
-            self.velocityX = 0
-            self.horizontalSpeed = 0
+
 
