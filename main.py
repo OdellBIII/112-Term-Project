@@ -4,8 +4,10 @@ from pygame.locals import *
 from objects.Piece import Piece
 from objects.Player import Player
 from objects.GamePiece import GamePiece
+from objects.Powerup import Powerup
 from modes.Screen import Screen
 from widgets.Button import *
+
 
 class App:
     def __init__(self, newWidth, newHeight):
@@ -30,9 +32,33 @@ class App:
         # Start Screen initialization
         self.startScreen = Screen(self.width, self.height, (255, 255, 255))
         self.startScreen.add(TextDisplay(self.width // 2, self.height // 4, 100, 50, "Jerry's Great Climb", 40))
-        button = Button(self.width // 2, self.height // 2, 100, 50, "Play!", 40)
-        button.setCallBack(self.setPlayScreen)
-        self.startScreen.add(button)
+        startButton = Button(self.width // 2, self.height // 2, 100, 50, "Play!", 40)
+        instructionButton = Button(self.width // 2, self.height // 2 + 50, 100, 50, "Instructions!", 40)
+        creditsButton = Button(self.width // 2, self.height // 2 + 100, 100, 50, "Credits!", 40)
+
+        startButton.setCallBack(self.setPlayScreen)
+        instructionButton.setCallBack(self.setInstructionScreen)
+        creditsButton.setCallBack(self.setCreditsScreen)
+        self.startScreen.add(startButton, instructionButton, creditsButton)
+
+        # Instruction Screen initialization
+        self.instructionScreen = Screen(self.width, self.height, (255, 255, 255))
+        self.instructionScreen.add(TextDisplay(self.width // 2, self.height // 4, 100, 50, "Instructions", 40))
+        self.instructionScreen.add(TextDisplay(self.width // 2, self.height // 4 + 50, 100, 50, "W.............................Jump", 40))
+        self.instructionScreen.add(TextDisplay(self.width // 2, self.height // 4 + 100, 100, 50, "A.............................Left", 40))
+        self.instructionScreen.add(TextDisplay(self.width // 2, self.height // 4 + 150, 100, 50, "D.............................Right", 40))
+        backButton = Button(50, 50, 100, 50, "<-", 40)
+        backButton.setCallBack(self.setStartScreen)
+        self.instructionScreen.add(backButton)
+
+        # Credits Screen Initialization
+        self.creditScreen = Screen(self.width, self.height, (255, 255, 255))
+        self.creditScreen.add(TextDisplay(self.width // 2, self.height // 4, 100, 50, "Credits!", 40))
+        self.creditScreen.add(TextDisplay(self.width // 2, self.height // 4 + 50, 100, 50, "Sole Developer.............................Odell Blackmon III", 20))
+        self.creditScreen.add(TextDisplay(self.width // 2, self.height // 4 + 100, 100, 50, "UI Designer.............................Odell Blackmon III", 20))
+        creditBackButton = Button(50, 50, 100, 50, "<-", 40)
+        creditBackButton.setCallBack(self.setStartScreen)
+        self.creditScreen.add(creditBackButton)
 
         # Game Screen initialization
         self.gameScreen = Screen(self.width, self.height, (0, 255, 255))
@@ -58,9 +84,11 @@ class App:
             pass
         elif self.currentScreen == 3:
 
+            self.creditScreen.on_event(event)
             pass
         elif self.currentScreen == 4:
 
+            self.instructionScreen.on_event(event)
             pass
 
         if event.type == pygame.QUIT:
@@ -73,9 +101,8 @@ class App:
             self.gameScreen.add(Piece(random.choice(list(range(0, 80*8, 80))), \
                                          -100 - self.scrollY, 80, 80, color))
 
-        if event.type == KEYDOWN and event.key == K_p:
-
-            self.currentScreen = 1
+            # self.gameScreen.add(Powerup(self.width //2, -100, 20, 20, (0, 0, 0)))
+            pass
 
     def on_loop(self):
 
@@ -83,6 +110,7 @@ class App:
 
         if self.currentScreen == 0:
 
+            self.startScreen.update(self)
             pass
         elif self.currentScreen == 1:
 
@@ -93,9 +121,11 @@ class App:
             pass
         elif self.currentScreen == 3:
 
+            self.creditScreen.update(self)
             pass
         elif self.currentScreen == 4:
 
+            self.instructionScreen.update(self)
             pass
 
 
@@ -110,14 +140,19 @@ class App:
 
             self.gameScreen.render(self._display_surf)
             pygame.display.flip()
+
         elif self.currentScreen == 2:
 
             pass
         elif self.currentScreen == 3:
 
+            self.creditScreen.render(self._display_surf)
+            pygame.display.flip()
             pass
         elif self.currentScreen == 4:
 
+            self.instructionScreen.render(self._display_surf)
+            pygame.display.flip()
             pass
 
     def changeScreen(self, newScreen):
@@ -130,6 +165,18 @@ class App:
 
         self.changeScreen(1)
         pygame.time.set_timer(self.newPieceGenerationEvent, 1000)
+
+    def setInstructionScreen(self):
+
+        self.changeScreen(4)
+
+    def setCreditsScreen(self):
+
+        self.changeScreen(3)
+
+    def setStartScreen(self):
+
+        self.changeScreen(0)
 
     def on_cleanup(self):
         pygame.quit()
