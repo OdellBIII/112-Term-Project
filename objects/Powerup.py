@@ -10,4 +10,3 @@ class Powerup(Piece):
 
         super().__init__(newX, newY, newWidth, newHeight, newColor)
 
-

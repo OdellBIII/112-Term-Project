@@ -41,26 +41,23 @@ class Piece(GamePiece):
 
         if not self.isTouched:
 
-            self.rect.move_ip(0, 20)
+            self.rect.move_ip(0, 10)
         else:
 
             self.rect.move_ip(0, 0)
 
         self.respondToBoundsCollision(application)
         self.collidedWithPieces()
+        self.rect.move_ip(0, application.scrollY)
 
 
 
     def respondToBoundsCollision(self, application):
 
-        if self.rect.y + self.height >= application.height - application.scrollY:
+        if self.rect.y + self.height >= application.height + application.scrollY:
 
             self.isTouched = True
 
-        if self.rect.y >= application.height - application.scrollY:
-
-            self.kill()
-            pass
 
     def collidedWithPieces(self):
 

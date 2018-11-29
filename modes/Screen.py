@@ -8,6 +8,8 @@ class Screen(object):
         self.gamePieceGroup = pygame.sprite.Group()
         self.background = pygame.Surface((width, height))
         self.background.fill(color)
+        self.isPaused = False
+        self.isRunning = True
 
     def add(self, *args):
 
@@ -18,12 +20,29 @@ class Screen(object):
 
     def update(self, application):
 
-        self.gamePieceGroup.update(application)
+        if self.isRunning:
+
+            if not self.isPaused:
+
+                self.gamePieceGroup.update(application)
 
     def render(self, drawingSurface):
 
-        drawingSurface.blit(self.background, self.background.get_rect())
-        self.gamePieceGroup.draw(drawingSurface)
+        if self.isRunning:
+
+            drawingSurface.blit(self.background, self.background.get_rect())
+            self.gamePieceGroup.draw(drawingSurface)
+
+
+
+
+    def pauseScreen(self):
+
+        self.isPaused = True
+
+    def unPauseScreen(self):
+
+        self.isPaused = False
 
     def on_event(self, event):
 

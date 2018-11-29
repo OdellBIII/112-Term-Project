@@ -1,3 +1,5 @@
+# The Widget class and subsequent classes in the Widget folder were inspired by PyGVisuals
+# which can be found here: https://github.com/Impelon/PyGVisuals
 
 import pygame
 from pygame.locals import *
