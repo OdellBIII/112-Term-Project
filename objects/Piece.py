@@ -5,8 +5,6 @@ from objects.GamePiece import GamePiece
 class Piece(GamePiece):
 
 
-    registryOfGamePieces = pygame.sprite.Group()
-
     def __init__(self, newX, newY, newWidth, newHeight, newColor):
 
         super().__init__(newX, newY, newWidth, newHeight)
@@ -14,57 +12,55 @@ class Piece(GamePiece):
         self.color = newColor
         self.surface.fill(newColor)
 
-        Piece.registryOfGamePieces.add(self)
 
     def __eq__(self, other):
 
         if isinstance(other, Piece) and self.rect == other.rect:
 
             return True
+
         else:
 
             return False
 
+
     def __hash__(self):
 
-        return hash(self.getHashables())
-
-    def __repr__(self):
-
-        return "No name billy bob"
-
-    def getHashables(self):
-
-        return self.x, self.y, self.isTouched, self.width, self.height
+        return super().__hash__()
 
     def update(self, application):
 
         if not self.isTouched:
 
-            self.rect.move_ip(0, 10)
-        else:
-
-            self.rect.move_ip(0, 0)
+            self.rect.move_ip(0, 5)
 
         self.respondToBoundsCollision(application)
-        self.collidedWithPieces()
-        self.rect.move_ip(0, application.scrollY)
+        self.collidedWithPieces(application)
+        self.rect.move_ip(0, application.scrollDy)
 
 
 
     def respondToBoundsCollision(self, application):
 
-        if self.rect.y + self.height >= application.height + application.scrollY:
+        if self.rect.y - 100 >= application.height:
+
+            super().remove(application.gameScreen.background.get_at((0, 0)))
+
+            pass
+
+        if self.rect.y + self.height >= application.ground:
 
             self.isTouched = True
+            self.rect.y = application.ground - self.height
 
+    def collidedWithPieces(self, application):
 
-    def collidedWithPieces(self):
-
-        listOfRects = [piece.rect for piece in Piece.registryOfGamePieces.sprites()]
+        listOfRects = [piece.rect for piece in application.gameScreen.gamePieceGroup.sprites() \
+                       if isinstance(piece, Piece) and not isinstance(piece, Powerup)]
 
         index = self.rect.collidelist(listOfRects)
-        if index != -1 and Piece.registryOfGamePieces.sprites()[index] != self and isinstance(self, Piece):
+        if index != -1 and application.gameScreen.gamePieceGroup.sprites()[index] != self and \
+                isinstance(application.gameScreen.gamePieceGroup.sprites()[index], Piece) and self.rect.y < listOfRects[index].y:
 
             self.isTouched = True
             self.rect.y = listOfRects[index].y - self.rect.height

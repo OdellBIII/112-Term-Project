@@ -32,13 +32,9 @@ class GamePiece(pygame.sprite.Sprite):
 
         return hash(self.getHashables())
 
-    def __repr__(self):
-
-        return "No name billy bob"
-
     def getHashables(self):
 
-        return self.x, self.y, self.isTouched, self.width, self.height
+        return self.x, self.y, self.isTouched, self.width, self.height, self.image
 
     def collidedWithPiece(self):
 
@@ -47,4 +43,10 @@ class GamePiece(pygame.sprite.Sprite):
     def onUserInput(self, event):
 
         pass
+
+    def remove(self, background):
+
+        super().kill()
+        self.rect = pygame.rect.Rect(0, 0, 0, 0)
+        self.image.fill(background)
 

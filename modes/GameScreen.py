@@ -12,9 +12,6 @@ class GameScreen(Screen):
         self.pausePanel = Screen(pausePanelDimensions, pausePanelDimensions, (0, 0, 0))
         resumeButton = Button(pausePanelDimensions // 2, pausePanelDimensions // 2, 100, 50, "Close Window", 40)
         resumeButton.setCallBack(GameScreen.printSomething)
-        self.pausePanel.add(resumeButton)
-        self.pausePanel.background.get_rect(center=(width // 2, height //2))
-
 
 
     def render(self, drawingSurface):

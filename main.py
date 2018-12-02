@@ -14,6 +14,7 @@ from modes.GameScreen import GameScreen
 from widgets.Button import *
 
 
+
 class App:
     def __init__(self, newWidth, newHeight):
         self._running = True
@@ -24,7 +25,7 @@ class App:
         # Scrolling configuration
         self.scrollDy = 0
         self.scrollY = 0
-        self.ground = self.height * (3 / 4)
+        self.ground = self.height * (9 / 10)
         self.scrollEvent = pygame.USEREVENT + 2
 
 
@@ -72,15 +73,16 @@ class App:
         # Game Screen initialization
         self.gameScreen = GameScreen(self.width, self.height, (0, 255, 255))
         self.newPieceGenerationEvent = pygame.USEREVENT + 1
-
+        self.newPowerUpGenerationEvent = pygame.USEREVENT + 3
         # Player initialization methods
-        self.gameScreen.add(Player(self.width // 2, 0, 20, 50, (255, 255, 255)))
+        # self.gameScreen.add(Player(self.width // 2, 0, 20, 50, (255, 255, 255)))
 
         # UI Initialization methods
-
-        pauseButton = Button(50, 50, 100, 50, "||", 40)
-        pauseButton.setCallBack(self.gameScreen.pauseScreen)
-        self.gameScreen.add(pauseButton)
+        # pauseButton = Button(50, 50, 100, 50, "||", 40)
+        # pauseButton.setCallBack(self.gameScreen.pauseScreen)
+        #
+        # self.gameScreen.addUI(pauseButton)
+        # self.gameScreen.add(pauseButton)
 
     def on_event(self, event):
 
@@ -109,17 +111,23 @@ class App:
             self._running = False
 
         # Produces a new falling piece every second
-        elif event.type == self.newPieceGenerationEvent:
+        if event.type == self.newPieceGenerationEvent:
 
             color = random.choice([(255, 255, 255), (0, 0, 255)])
-            self.gameScreen.add(Piece(random.choice(list(range(0, 80*8, 80))), \
-                                         - 100 - self.scrollY, 80, 80, color))
+
+            self.gameScreen.add(Piece(random.choice(list(range(0, 80*5, 80))) + 10, \
+                                          - 100 - self.scrollY, 60, 100, color))
+
+        if event.type == self.newPowerUpGenerationEvent:
+
+            print("New Powerup!")
+            self.gameScreen.add(Powerup(random.choice(list(range(0, 80 * 5, 80))) + 30, \
+                                        -100 - self.scrollY, 20, 20, (0, 0, 0)))
 
         if event.type == self.scrollEvent:
 
-            self.scrollDy = 10
-            self.scrollY += self.scrollDy
-            self.ground += self.scrollDy
+            self.scrollDy = 1
+            pygame.time.set_timer(self.scrollEvent, 0)
             pass
 
     def on_loop(self):
@@ -146,7 +154,8 @@ class App:
             self.instructionScreen.update(self)
             pass
 
-        self.scrollY = 0
+        self.ground += self.scrollDy
+        self.scrollY += self.scrollDy
 
     def on_render(self):
 
@@ -184,7 +193,9 @@ class App:
 
         self.changeScreen(1)
         pygame.time.set_timer(self.newPieceGenerationEvent, 500)
-        pygame.time.set_timer(self.scrollEvent, 2000)
+        pygame.time.set_timer(self.newPowerUpGenerationEvent, 5000)
+        pygame.time.set_timer(self.scrollEvent, 5000)
+        self.scrollDy = 0
 
     def setInstructionScreen(self):
 

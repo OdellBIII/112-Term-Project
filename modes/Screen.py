@@ -1,11 +1,13 @@
-from objects.GamePiece import GamePiece
 import pygame
+from objects.GamePiece import GamePiece
+from widgets.Widget import Widget
 
 class Screen(object):
 
     def __init__(self, width, height, color):
 
         self.gamePieceGroup = pygame.sprite.Group()
+        self.userInterfaceGroup = pygame.sprite.Group()
         self.background = pygame.Surface((width, height))
         self.background.fill(color)
         self.isPaused = False
@@ -18,6 +20,15 @@ class Screen(object):
 
                 self.gamePieceGroup.add(arg)
 
+
+    def addUI(self, *args):
+
+        for arg in args:
+
+            if isinstance(arg, Widget):
+
+                self.userInterfaceGroup.add(arg)
+
     def update(self, application):
 
         if self.isRunning:
@@ -25,6 +36,7 @@ class Screen(object):
             if not self.isPaused:
 
                 self.gamePieceGroup.update(application)
+                self.userInterfaceGroup.update(application)
 
     def render(self, drawingSurface):
 
