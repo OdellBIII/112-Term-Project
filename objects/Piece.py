@@ -2,6 +2,7 @@ import pygame
 from pygame.locals import *
 from objects.GamePiece import GamePiece
 
+
 class Piece(GamePiece):
 
 
@@ -28,11 +29,12 @@ class Piece(GamePiece):
 
         return super().__hash__()
 
+
     def update(self, application):
 
         if not self.isTouched:
 
-            self.rect.move_ip(0, 5)
+            self.rect.move_ip(0, 10)
 
         self.respondToBoundsCollision(application)
         self.collidedWithPieces(application)
@@ -42,25 +44,23 @@ class Piece(GamePiece):
 
     def respondToBoundsCollision(self, application):
 
-        if self.rect.y - 100 >= application.height:
-
-            super().remove(application.gameScreen.background.get_at((0, 0)))
+        if self.rect.y - 1000 >= application.height:
 
             pass
 
         if self.rect.y + self.height >= application.ground:
 
             self.isTouched = True
-            self.rect.y = application.ground - self.height
+            self.rect.y = application.ground - self.rect.height - 1
 
     def collidedWithPieces(self, application):
 
-        listOfRects = [piece.rect for piece in application.gameScreen.gamePieceGroup.sprites() \
-                       if isinstance(piece, Piece) and not isinstance(piece, Powerup)]
+        listOfRects = [piece.rect for piece in application.currentScreenInstance.gamePieceGroup.sprites() \
+                       if isinstance(piece, Piece) and piece.__class__.__name__ == "Piece"]
 
         index = self.rect.collidelist(listOfRects)
-        if index != -1 and application.gameScreen.gamePieceGroup.sprites()[index] != self and \
-                isinstance(application.gameScreen.gamePieceGroup.sprites()[index], Piece) and self.rect.y < listOfRects[index].y:
+        if index != -1 and \
+                self.rect.y < listOfRects[index].y:
 
             self.isTouched = True
-            self.rect.y = listOfRects[index].y - self.rect.height
+            self.rect.y = listOfRects[index].y - self.rect.height - 1

@@ -1,6 +1,8 @@
 import pygame
 from pygame.locals import *
 
+# Referenced this url for how to use Sprites and Groups: https://www.pygame.org/docs/ref/sprite.html
+# Referenced this url for how to use Rects in Pygame: https://www.pygame.org/docs/ref/rect.html
 class GamePiece(pygame.sprite.Sprite):
 
 
@@ -30,23 +32,17 @@ class GamePiece(pygame.sprite.Sprite):
 
     def __hash__(self):
 
-        return hash(self.getHashables())
+        return super().__hash__()
 
     def getHashables(self):
 
         return self.x, self.y, self.isTouched, self.width, self.height, self.image
 
-    def collidedWithPiece(self):
+    def collidedWithPieces(self):
 
         pass
 
     def onUserInput(self, event):
 
         pass
-
-    def remove(self, background):
-
-        super().kill()
-        self.rect = pygame.rect.Rect(0, 0, 0, 0)
-        self.image.fill(background)
 

@@ -53,11 +53,3 @@ class Widget(GamePiece):
     def onUserInput(self, event):
 
         pass
-
-
-
-
-
-
-
-

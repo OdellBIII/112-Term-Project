@@ -21,8 +21,14 @@ class Button(TextDisplay):
 
     def setCallBack(self, callBack):
 
-        self.callback = callBack
-        return self
+        if callable(callBack):
+
+            self.callback = callBack
+            return self
+
+        else:
+
+            print("No no does not work!")
 
     def onUserInput(self, event):
 

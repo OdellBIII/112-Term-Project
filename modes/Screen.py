@@ -1,6 +1,7 @@
 import pygame
 from objects.GamePiece import GamePiece
 from widgets.Widget import Widget
+from widgets.TextInput import TextInput
 
 class Screen(object):
 
@@ -12,14 +13,20 @@ class Screen(object):
         self.background.fill(color)
         self.isPaused = False
         self.isRunning = True
+        self.width = width
+        self.height = height
+        self.color = color
+        self.lock = False
 
     def add(self, *args):
 
-        for arg in args:
-            if isinstance(arg, GamePiece):
+        if not self.lock:
 
-                self.gamePieceGroup.add(arg)
+            for arg in args:
 
+                if isinstance(arg, GamePiece):
+
+                    self.gamePieceGroup.add(arg)
 
     def addUI(self, *args):
 

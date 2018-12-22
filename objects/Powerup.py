@@ -6,10 +6,11 @@ from objects.Piece import Piece
 
 class Powerup(Piece):
 
-    def __init__(self, newX, newY, newWidth, newHeight, newColor):
+    def __init__(self, newX, newY, newWidth, newHeight, newColor, powerUpType):
 
         super().__init__(newX, newY, newWidth, newHeight, newColor)
         self.isActive = False
+        self.power = powerUpType
 
     def __hash__(self):
 
@@ -23,8 +24,10 @@ class Powerup(Piece):
 
         else:
 
-            super().remove(application.gameScreen.background.get_at((0, 0)))
+            self.remove(application.currentScreenInstance.background.get_at((0, 0)))
 
-    def power(self):
+    def remove(self, color):
 
-        return "Double Jump"
+        self.rect = pygame.rect.Rect((0, 0), (0, 0))
+        self.image.fill(color)
+
